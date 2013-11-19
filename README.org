@@ -1,0 +1,71 @@
+* About
+  This is a toy project intended for a novice programmer to collect
+  basic experience of working with Common Lisp.
+
+  This project features code for solving 9x9 sudoku puzzles.
+
+* Obtaining
+
+** GNU/Linux
+   Instructions are given for command-line interface, which means
+   that you are required to type the code below in the terminal.
+   Whenever the line is prefixed with =$=, it means that it needs
+   to be executed with your regular user permissions. =#= means
+   that you need =root= user permissions to execute the code.
+   
+*** REHL (Fedora Core, CentOS)
+    : # yum install git curl sbcl emacs
+    : $ cd ~
+    : $ curl -O http://beta.quicklisp.org/quicklisp.lisp
+    : sbcl --load quicklisp.lisp
+    Follow instructions found [[http://www.quicklisp.org/beta/][here]] in order to complete
+    =Quicklisp= installation.
+
+    Now, using =sbcl= and =Quicklisp= install =slime-helper=
+    : $ sbcl --eval '(ql:quickload :slime-helper)'
+    : $ echo '(load (expand-file-name "~/quicklisp/slime-helper.el"))' \
+    : >> ~/.emacs.d/init.el
+    : $ echo '(setq inferior-lisp-program "sbcl")' >> ~/.emacs.d/init.el
+
+    Let's download our project!
+    : $ cd ~/quicklisp/local-projects
+    : $ git clone https://github.com/wvxvw/sudoku-solver.git
+
+    Now you should be all set up for experimenting!
+    Start Emacs:
+    : $ emacs
+    Load SLIME:
+    : M-x slime
+    Load project (once in the REPL buffer):
+    : (ql:quickload :sudoku-solver)
+
+* Running
+  TBD
+
+* Bugs
+  TBD
+
+* Tasks
+  
+** TODO Write and test installation on other systems                :install:
+   DEADLINE: <2013-12-19 Thu>
+   First, do it for Ubuntu, I should have a VM somewhere, then try to
+   find some Windows machine to test it on.
+     
+** TODO Implement backtracking                                         :code:
+   DEADLINE: <2013-11-23 Sat>
+   This is the bit of code that is missing yet.
+
+** TODO Write tests                                                    :code:
+   DEADLINE: <2013-11-26 Tue>
+   Once this starts to work, add some tests, use =5am= to write them.
+
+** TODO Add examples                                                   :code:
+   DEADLINE: <2013-11-30 Sat>
+   Some tests could be used as examples, but probably I'd need more.
+
+** TODO Add some interface                                             :code:
+   DEADLINE: <2013-12-03 Tue>
+   The program could use some nice interface, like, display visually
+   the process of solving. Probably simple printing to the terminal
+   will do.
