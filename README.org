@@ -13,7 +13,7 @@
    to be executed with your regular user permissions. =#= means
    that you need =root= user permissions to execute the code.
    
-*** REHL (Fedora Core, CentOS)
+*** RHEL (Fedora Core, CentOS)
     : # yum install git curl sbcl emacs
     : $ cd ~
     : $ curl -O http://beta.quicklisp.org/quicklisp.lisp
