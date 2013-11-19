@@ -16,13 +16,15 @@
           (setf result (+ (* result 10) (aref board row column))))
     (finally (return result))))
 
-(defun eliminate-horizontal (board row options)
+(defun eliminate-horizontal (board row column options)
+  (declare (ignore column))
   (iter
     (for i :from 0 :below 9)
     (setf options (delete (aref board row i) options)))
   options)
 
-(defun eliminate-vertical (board column options)
+(defun eliminate-vertical (board row column options)
+  (declare (ignore row))
   (iter
     (for i :from 0 :below 9)
     (setf options (delete (aref board i column) options)))
@@ -39,9 +41,15 @@
 
 (defun best-options (cell board)
   (iter
-    (with result := (list 0 1 2 3 4 5 6 7 8 9))
-    (for (x . y) :in-vector group)
-    (setf result (delete (aref board x y) result))
+    (with row := (second cell))
+    (with column := (third cell))
+    (initially (setq result (list 0 1 2 3 4 5 6 7 8 9)))
+    (for func :in '(eliminate-horizontal
+                    eliminate-vertical
+                    eliminate-square
+                    eliminate-ltrb eliminate-rtlb))
+    (for result :next (funcall board func row column result))
+    (while result)
     (finally (return result))))
 
 (defun vertical-up (score-board i)
@@ -115,6 +123,23 @@
          (setf (aref new-board (second cell) (third cell)) fit)
          new-board)))))
 
+(defun try-fit (where board options)
+  (iter
+    (with row := (second where))
+    (with column := (third where))
+    (with top := (floor row 3))
+    (with left := (floor column 3))
+    (for i :from 0 :below 9)
+    (while options)
+    (iter
+      (for option :in options)
+      (when (or (= (aref board row i) option)
+                (= (aref board i column) option)
+                (= (aref board (+ top (floor i 3))
+                         (+ left (mod i 3))) option))
+        (setf options (delete option options))))
+    (finally (return (car options)))))
+
 (defun try-solve (state)
   (let ((board (solving-state-board state)))
     (assign-scores board (whipe-board *score-board* 0))
@@ -125,3 +150,28 @@
          :next state
          :restarts (subseq (cdr cells) 0 *max-restarts*)
          :board (place-on-board board (car cells) fit)))))))
+
+(defun number-of-steps (board)
+  (iter
+    (for i :from 0 :below 9)
+    (summing
+     (iter
+       (for j :from 0 :below 9)
+       (when (= -1 (aref board i j))
+         (summing 1))))))
+
+(defun solve (board)
+  (let ((initial
+         (make-solving-state :next nil :restarts nil :board board))
+        (numsteps (number-of-steps board)))
+    (labels ((%solve (state step)
+               (let ((attempt (try-solve state)))
+                 (cond
+                   ((and attempt (= step numsteps))
+                    (solving-state-board attempt))
+                   (attempt (%solve attempt (1+ step)))
+                   (t (%backtrack state step)))))
+             (%backtrack (state step)
+               (format t "~&state: ~s, step: ~d" state step)))
+      (%solve initial 0))))
+                     
