@@ -17,12 +17,12 @@
     : # yum install git curl sbcl emacs
     : $ cd ~
     : $ curl -O http://beta.quicklisp.org/quicklisp.lisp
-    : sbcl --load quicklisp.lisp
+    : $ sbcl --load quicklisp.lisp
     Follow instructions found [[http://www.quicklisp.org/beta/][here]] in order to complete
     =Quicklisp= installation.
 
-    Now, using =sbcl= and =Quicklisp= install =slime-helper=
-    : $ sbcl --eval '(ql:quickload :slime-helper)'
+    Now, using =sbcl= and =Quicklisp= install =quicklisp-slime-helper=
+    : $ sbcl --eval '(ql:quickload :quicklisp-slime-helper)'
     : $ echo '(load (expand-file-name "~/quicklisp/slime-helper.el"))' \
     : >> ~/.emacs.d/init.el
     : $ echo '(setq inferior-lisp-program "sbcl")' >> ~/.emacs.d/init.el
