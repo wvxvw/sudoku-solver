@@ -151,23 +151,6 @@
          (setf (aref new-board (second cell) (third cell)) fit)
          new-board)))))
 
-(defun try-fit (where board options)
-  (iter
-    (with row := (second where))
-    (with column := (third where))
-    (with top := (- row (mod row 3)))
-    (with left := (- column (mod column 3)))
-    (for i :from 0 :below 9)
-    (while options)
-    (iter
-      (for option :in options)
-      (when (or (= (aref board row i) option)
-                (= (aref board i column) option)
-                (= (aref board (+ top (mod i 3))
-                         (+ left (floor i 3))) option))
-        (setf options (delete option options))))
-    (finally (return (car options)))))
-
 (defun try-solve (state)
   (let ((board (solving-state-board state)))
     (assign-scores board (whipe-board *score-board* 0))
@@ -176,7 +159,6 @@
                       (best-cells board *score-board*)))
            (options (or (solving-state-options state)
                         (best-options cells board)))
-           ;; (fit (try-fit cells board options))
            (fit (car options)))
       (format t "~&fitting: ~s, options: ~s, fit: ~d, board:~% ~s"
               cells options fit board)
@@ -201,6 +183,7 @@
   (iter
     (with step := 0)
     (with cells := (best-cells board *score-board*))
+    (with options := nil)
     (with previous-state :=
           (make-solving-state
            :next nil
@@ -214,8 +197,9 @@
          (make-solving-state
           :next previous-state
           :restarts nil
-          :options nil
+          :options options
           :board (solving-state-board previous-state)))
+    (setf options nil)
     (for attempt := (try-solve next-state))
     (format t "~&----------step: ~d" step)
     (if attempt
@@ -226,11 +210,5 @@
                 previous-state (solving-state-next next-state)
                 step (1- step))
           (unless next-state (return "no solutions"))
-          (summing 1 :into steps)
-          (finally
-           (let* ((board (solving-state-board next-state))
-                  (cells (solving-state-restarts next-state))
-                  (x (second cells))
-                  (y (third cells)))
-             (format t "~&stepped back: ~d" steps)
-             (setf (aref board x y) 0)))))))
+          (finally (setf options (solving-state-options next-state)))))
+    (finally (format t "~&result: ~%~s" (solving-state-board next-state)))))
