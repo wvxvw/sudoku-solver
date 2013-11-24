@@ -1,22 +1,8 @@
 (in-package :sudoku-solver)
 
-(defparameter *test-board*
-  (make-array
-   '(9 9)
-   :initial-contents
-   '((0 0 0 1 0 5 0 6 8)
-     (0 0 0 0 0 0 7 0 1)
-     (9 0 1 0 0 0 0 3 0)
-     (0 0 7 0 2 6 0 0 0)
-     (5 0 0 0 0 0 0 0 3)
-     (0 0 0 8 7 0 4 0 0)
-     (0 3 0 0 0 0 8 0 5)
-     (1 0 5 0 0 0 0 0 0)
-     (7 9 0 4 0 1 0 0 0))))
-
 (defparameter *score-board* (make-array '(9 9) :initial-element 0))
 
-(defstruct solving-state next restarts options board)
+(defstruct solving-state next position options board)
 
 (defun board->hash (board)
   (iter
@@ -119,7 +105,7 @@
         ;; (when (= (- 8 i) j) (diagonal-up-rtl score-board))
         ))))
 
-(defun best-cells (board score-board)
+(defun best-pos (board score-board)
   (iter
     (with best-score := 0)
     (with result := nil)
@@ -154,19 +140,16 @@
 (defun try-solve (state)
   (let ((board (solving-state-board state)))
     (assign-scores board (whipe-board *score-board* 0))
-    (format t "~&options in: ~s" (solving-state-options state))
-    (let* ((cells (or (solving-state-restarts state)
-                      (best-cells board *score-board*)))
+    (let* ((pos (or (solving-state-position state)
+                      (best-pos board *score-board*)))
            (options (or (solving-state-options state)
-                        (best-options cells board)))
+                        (best-options pos board)))
            (fit (car options)))
-      (format t "~&fitting: ~s, options: ~s, fit: ~d, board:~% ~s"
-              cells options fit board)
       (when fit
-        (setf (solving-state-restarts state) cells
+        (setf (solving-state-position state) pos
               (solving-state-options state) (cdr options)
               (solving-state-board state)
-              (place-on-board board cells fit))
+              (place-on-board board pos fit))
         state))))
 
 (defun number-of-steps (board)
@@ -179,16 +162,35 @@
          (summing 1))))))
 
 (defun solve (board)
+  "Employs best-first match algorithm for solving the sudoku 9x9
+puzzle. The algorithm works as follows:
+1. Assign cost values to every cell on the board, the cost is
+   calculated using this formula: number of non-empty cells in
+   the row plus number of non-empty cells in the column plus
+   number of non-empty cells in the sub-board (a 3x3 matrix,
+   one of the 9 parts together forming the 9x9 board)
+2. Find the cell such that it has the highest score and is empty.
+3. If there is no such cell, the algorithm finished, return the
+   solved board.
+4. Find all possible numbers that could be used to fill the cell.
+5. If there isn't such number, go to step 7.
+6. Place the number on the board. Record the state of the algorithm.
+   The state must store all other possible options for filling
+   the empty cell. Go to step 1.
+7. Retrieve the last state of the algorithm, if there is no
+   previous state, the game has no solutions. If the state has
+   one or more options to fill the empty cell, restore this state
+   and go to step 6. Otherwise, repeat step 7."
   (assign-scores board (whipe-board *score-board* 0))
   (iter
     (with step := 0)
-    (with cells := (best-cells board *score-board*))
+    (with pos := (best-pos board *score-board*))
     (with options := nil)
     (with previous-state :=
           (make-solving-state
            :next nil
-           :restarts cells
-           :options (best-options cells board)
+           :position pos
+           :options (best-options pos board)
            :board board))
     
     (while (< step (number-of-steps board)))
@@ -196,12 +198,11 @@
     (for next-state :=
          (make-solving-state
           :next previous-state
-          :restarts nil
+          :position nil
           :options options
           :board (solving-state-board previous-state)))
     (setf options nil)
     (for attempt := (try-solve next-state))
-    (format t "~&----------step: ~d" step)
     (if attempt
         (setf step (1+ step) previous-state next-state)
         (iter
@@ -211,4 +212,4 @@
                 step (1- step))
           (unless next-state (return "no solutions"))
           (finally (setf options (solving-state-options next-state)))))
-    (finally (format t "~&result: ~%~s" (solving-state-board next-state)))))
+    (finally (return (solving-state-board next-state)))))
