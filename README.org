@@ -39,6 +39,17 @@
     Load project (once in the REPL buffer):
     : (ql:quickload :sudoku-solver)
 
+*** Debian (Ubuntu, Mint)
+    Follow the steps for RHEL, but replace =yum= with =apt-get=.
+
+* Testing
+  Start Lisp, for example:
+  : $ sbcl
+  Load =sudoku-solver= system:
+  : (ql:quickload :sudoku-solver)
+  Execute tests:
+  : (asdf:oos 'asdf:test-op :sudoku-solver)
+
 * Running
   TBD
 
@@ -52,11 +63,11 @@
    First, do it for Ubuntu, I should have a VM somewhere, then try to
    find some Windows machine to test it on.
      
-** TODO Implement backtracking                                         :code:
+** DONE Implement backtracking                                         :code:
    DEADLINE: <2013-11-23 Sat>
    This is the bit of code that is missing yet.
 
-** TODO Write tests                                                    :code:
+** DONE Write tests                                                    :code:
    DEADLINE: <2013-11-26 Tue>
    Once this starts to work, add some tests, use =5am= to write them.
 
