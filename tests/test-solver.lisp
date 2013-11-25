@@ -1,7 +1,9 @@
-(defpackage :sudoku-solver.test
-  (:use :common-lisp :iterate :sudoku-solver :it.bese.fiveam))
-
 (in-package :sudoku-solver.test)
+
+(in-suite :sudoku-solver.test)
+
+(def-suite test-suite
+    :description "Minimal testing suite for sudoku-solver project.")
 
 (defparameter *test-board*
   (make-array

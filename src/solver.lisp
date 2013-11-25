@@ -4,6 +4,18 @@
 
 (defstruct solving-state next position options board)
 
+;; 4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......
+(defun read-board (stream)
+  (iter
+    (with result := (make-array '(9 9) :initial-element 0))
+    (generate position :upfrom 0)
+    (for char :in-stream stream :using #'read-char)
+    (when (member char '(#\0 #\. #\1 #\2 #\3 #\4 #\5 #\6 #\7 #\8 #\9))
+      (next position)
+      (setf (aref result (floor position 9) (mod position 9))
+            (if (member char '(#\. #\0)) 0 (- (char-code char) 48))))
+    (finally (return result))))
+
 (defun board->hash (board)
   (iter
     (with result := 0)
