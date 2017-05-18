@@ -6,8 +6,14 @@
 
 (defclass doc-op (asdf:operation) ())
 
-(defmethod perform ((this doc-op) system)
-    (format t "~%documenting system: ~s" system))
+(defmethod perform ((this doc-op) (system asdf:system))
+  (when (string= (slot-value system 'asdf::name) "sudoku-solver")
+    (let ((sys-path (make-pathname :defaults (slot-value system 'asdf::source-file)
+                                   :name nil :type nil)))
+      (asdf:load-system system)
+      (in-package :sudoku-solver.doc)
+      (funcall (intern "GENERATE-HTDOC" *package*) sys-path)
+      (in-package :sudoku-solver-asd))))
 
 (defsystem sudoku-solver
   :version "0.1"
