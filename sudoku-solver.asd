@@ -1,6 +1,13 @@
 (in-package :cl)
-(defpackage sudoku-solver-asd (:use :cl :asdf))
+(defpackage sudoku-solver-asd
+  (:use :cl :asdf)
+  (:export :doc-op))
 (in-package :sudoku-solver-asd)
+
+(defclass doc-op (asdf:operation) ())
+
+(defmethod perform ((this doc-op) system)
+    (format t "~%documenting system: ~s" system))
 
 (defsystem sudoku-solver
   :version "0.1"
@@ -23,7 +30,8 @@
                                :element-type 'character
                                :fill-pointer t)))
           (setf (fill-pointer seq) (read-sequence seq stream)) seq)))
-  :in-order-to ((test-op (load-op :sudoku-solver-test)))
+  :in-order-to ((test-op (load-op :sudoku-solver-test))
+                (sudoku-solver-asd:doc-op (load-op :sudoku-solver-doc)))
   :perform (test-op :after (op c)
                     (funcall (intern (string '#:run!) :sudoku-solver.test)
                              :sudoku-solver.test)))
@@ -40,7 +48,7 @@
                          (:file "suite" :depends-on ("package"))
                          (:file "test-solver" :depends-on ("suite"))))))
 
-(defsystem :sudoku-sovler-doc
+(defsystem :sudoku-solver-doc
   :author "Oleg Sivokon <olegsivokon@gmail.com>"
   :description "Documentation for sudoku-solver package"
   :license "MIT"

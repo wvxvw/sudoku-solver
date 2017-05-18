@@ -50,6 +50,14 @@
   Execute tests:
   : (asdf:oos 'asdf:test-op :sudoku-solver)
 
+* Generating Documentation
+  : $ sbcl
+  #+BEGIN_SRC lisp
+    (ql:quickload :sudoku-solver)
+    (ql:quickload :sudoku-solver-doc)
+    (asdf:oos 'sudoku-solver-asd:doc-op :sudoku-solver)
+  #+END_SRC
+
 * Running
   #+BEGIN_SRC lisp
     (ql:quickload :sudoku-solver)

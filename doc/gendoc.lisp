@@ -1,4 +1,4 @@
-(in-package :sudoku-sovler.doc)
+(in-package :sudoku-solver.doc)
 
 (defun generate-htdoc (path)
   (let ((dest (cl-fad:merge-pathnames-as-file path #p"./doc/html/"))) 
