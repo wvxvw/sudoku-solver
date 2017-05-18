@@ -51,7 +51,28 @@
   : (asdf:oos 'asdf:test-op :sudoku-solver)
 
 * Running
-  TBD
+  #+BEGIN_SRC lisp
+    (ql:quickload :sudoku-solver)
+
+    (in-package :sudoku-solver)
+
+    (defparameter *simple-board*
+      (make-array
+       '(9 9)
+       :initial-contents
+       '((0 0 0 1 0 5 0 6 8)
+         (0 0 0 0 0 0 7 0 1)
+         (9 0 1 0 0 0 0 3 0)
+         (0 0 7 0 2 6 0 0 0)
+         (5 0 0 0 0 0 0 0 3)
+         (0 0 0 8 7 0 4 0 0)
+         (0 3 0 0 0 0 8 0 5)
+         (1 0 5 0 0 0 0 0 0)
+         (7 9 0 4 0 1 0 0 0))))
+
+    ;; This will return a solved board
+    (sudoku-solver:solve *simple-board*)
+  #+END_SRC
 
 * Bugs
   TBD
@@ -71,7 +92,7 @@
    DEADLINE: <2013-11-26 Tue>
    Once this starts to work, add some tests, use =5am= to write them.
 
-** TODO Add examples                                                   :code:
+** DONE Add examples                                                   :code:
    DEADLINE: <2013-11-30 Sat>
    Some tests could be used as examples, but probably I'd need more.
 
