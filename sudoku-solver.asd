@@ -39,3 +39,14 @@
                         ((:file "package")
                          (:file "suite" :depends-on ("package"))
                          (:file "test-solver" :depends-on ("suite"))))))
+
+(defsystem :sudoku-sovler-doc
+  :author "Oleg Sivokon <olegsivokon@gmail.com>"
+  :description "Documentation for sudoku-solver package"
+  :license "MIT"
+  :depends-on (:sudoku-solver :atdoc :cl-fad)
+  :components ((:module "doc"
+                        :serial t
+                        :components
+                        ((:file "package")
+                         (:file "gendoc" :depends-on ("package"))))))
