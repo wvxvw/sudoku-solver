@@ -3,15 +3,16 @@
   (:use :cl :alexandria :split-sequence :iterate)
   (:export :solve)
   (:documentation
-   "@a[https://github.com/wvxvw/sudoku-solver]{sudoku-solver}
-    Provides simple backtracking sudoku solver.
-    @begin[Functions]{section}
-    The library provides these functions
-    @aboutfun{solve}
-    To run the solver.
-    @end{section}
-    @begin[Example]{section}
-    @begin{pre}
+   "
+@a[https://github.com/wvxvw/sudoku-solver]{sudoku-solver}
+  Provides simple backtracking sudoku solver.
+@begin[Functions]{section}
+  The library provides these functions
+@aboutfun{solve}
+  To run the solver.
+@end{section}
+@begin[Example]{section}
+@begin{pre}
 \(in-package :sudoku-solver)
 \(defparameter *test-board*
   (make-array

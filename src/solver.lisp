@@ -174,25 +174,32 @@
          (summing 1))))))
 
 (defun solve (board)
-  "Employs best-first match algorithm for solving the sudoku 9x9
-puzzle. The algorithm works as follows:
-1. Assign cost values to every cell on the board, the cost is
-   calculated using this formula: number of non-empty cells in
-   the row plus number of non-empty cells in the column plus
-   number of non-empty cells in the sub-board (a 3x3 matrix,
-   one of the 9 parts together forming the 9x9 board)
-2. Find the cell such that it has the highest score and is empty.
-3. If there is no such cell, the algorithm finished, return the
-   solved board.
-4. Find all possible numbers that could be used to fill the cell.
-5. If there isn't such number, go to step 7.
-6. Place the number on the board. Record the state of the algorithm.
-   The state must store all other possible options for filling
-   the empty cell. Go to step 1.
-7. Retrieve the last state of the algorithm, if there is no
-   previous state, the game has no solutions. If the state has
-   one or more options to fill the empty cell, restore this state
-   and go to step 6. Otherwise, repeat step 7."
+  "
+@arg[board]{a two-dimensional array of numbers, use
+            zeros for unspecified numbers}
+@return{solved board}
+@short{Solve the board and return it}
+@begin{itemize}
+  Employs best-first match algorithm for solving the sudoku 9x9
+  puzzle. The algorithm works as follows:
+@item{Assign cost values to every cell on the board, the cost is
+      calculated using this formula: number of non-empty cells in
+      the row plus number of non-empty cells in the column plus
+      number of non-empty cells in the sub-board (a 3x3 matrix,
+      one of the 9 parts together forming the 9x9 board).}
+@item{Find the cell such that it has the highest score and is empty.}
+@item{If there is no such cell, the algorithm finished, return the
+      solved board.}
+@item{Find all possible numbers that could be used to fill the cell.}
+@item{If there isn't such number, go to step 7.}
+@item{Place the number on the board. Record the state of the algorithm.
+      The state must store all other possible options for filling
+      the empty cell. Go to step 1.}
+@item{Retrieve the last state of the algorithm, if there is no
+      previous state, the game has no solutions. If the state has
+      one or more options to fill the empty cell, restore this state
+      and go to step 6. Otherwise, repeat step 7.}
+@end{itemize}"
   (assign-scores board (whipe-board *score-board* 0))
   (iter
     (with step := 0)
